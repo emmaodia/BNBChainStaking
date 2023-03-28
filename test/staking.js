@@ -3,60 +3,73 @@ const UGToken = artifacts.require("UGToken");
 const Staking = artifacts.require("Staking");
 const MockBEP20 = artifacts.require("MockBEP20");
 
-contract("Staking", (account) => {
-  beforeEach(async () => {
+contract("Staking", (accounts) => {
+  before(async () => {
     this.breadToken = await BreadToken.deployed();
     this.ugToken = await UGToken.deployed();
     this.staking = await Staking.deployed();
     this.mockBep = await MockBEP20.deployed();
   });
 
-  it("can create a staking pool", async () => {
-    await this.staking.createStakingPool(1, this.mockBep.address);
+  describe("Staking Contract Tests", async () => {
+    it("can create a staking pool", async () => {
+      await this.staking.createStakingPool(1, this.mockBep.address);
 
-    assert(
-      this.mockBep.address !== this.breadToken.address,
-      "Cannot create another bread pool"
-    );
-  });
-
-  it("can deposit token into the pool", async () => {
-    console.log(
-      "prev balance owner is ",
-      await this.breadToken.balanceOf(account[0])
-    );
-
-    const ownerPreviousBalance = await this.breadToken.balanceOf(account[0]); // //deposit
-    await this.staking.createStakingPool(1, this.breadToken.address);
-
-    const amount = "1000";
-
-    console.log("amount ", amount);
-
-    let txn = await this.breadToken.approve(this.staking.address, amount, {
-      from: account[0],
-    });
-    console.log("txn: ", txn);
-    // await this.stakeToken.deposit(0, amount);
-    const excessValue = "300"; // 10000000000000000000
-    let tx = await this.staking.depositToken(0, "20", {
-      from: account[0],
+      assert(
+        this.mockBep.address !== this.breadToken.address,
+        "Cannot create another bread pool"
+      );
     });
 
-    let receipt = await tx.wait();
-    console.log(
-      "event: ",
-      receipt.events?.filter((x) => {
-        return x.event == "Deposit";
-      })
-    );
+    it("can deposit token into the pool, and emit Approval and Deposit Events", async () => {
+      const res = await this.breadToken.balanceOf(accounts[0]);
+      console.log("prev balance owner is ", await res.toNumber());
 
-    console.log(
-      "new balance owner is ",
-      await this.breadToken.balanceOf(account[0])
-    );
-    expect(await this.breadToken.balanceOf(account[0])).to.equal(
-      "999999999999999999999980"
-    );
+      await this.breadToken.mint(accounts[0], 1000);
+
+      const ownerPreviousBalance = await this.breadToken.balanceOf(accounts[0]); // //deposit
+      await this.staking.createStakingPool(1, this.breadToken.address);
+
+      const amount = "1000";
+
+      console.log("amount ", amount);
+
+      let txn = await this.breadToken.approve(this.staking.address, amount, {
+        from: accounts[0],
+      });
+      // console.log("txn: ", txn);
+      let approvalReceipt = await txn.logs[0].event;
+      console.log(approvalReceipt);
+
+      assert.equal(approvalReceipt, "Approval");
+
+      // await this.stakeToken.deposit(0, amount);
+      const excessValue = "300"; // 10000000000000000000
+      const resp = await this.breadToken.balanceOf(accounts[0]);
+      console.log("current balance owner is ", await resp.toNumber());
+      let tx = await this.staking.depositToken(1, "20", {
+        from: accounts[0],
+      });
+
+      let receipt = await tx.logs[0].event;
+      console.log(receipt);
+
+      assert.equal(receipt, "Deposit");
+
+      const newBalance = await this.breadToken.balanceOf(accounts[0]);
+      console.log("new balance owner is ", newBalance.toNumber());
+
+      expect(newBalance.toNumber()).to.equal(980);
+    });
+
+    it("can emit Approval event", async () => {
+      let txn = await this.breadToken.approve(this.staking.address, 1000, {
+        from: accounts[0],
+      });
+      // console.log("txn: ", txn);
+      let approvalReceipt = await txn.logs[0].event;
+
+      assert.equal(approvalReceipt, "Approval");
+    });
   });
 });

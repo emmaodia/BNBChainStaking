@@ -3,6 +3,14 @@
 const UGToken = artifacts.require("UGToken");
 
 contract("UGToken", (accounts) => {
+  it("matches name successfully", async () => {
+    let ugToken = await UGToken.new();
+
+    const name = await ugToken.name();
+
+    assert.equal(name, "UGToken");
+  });
+
   it("can mint tokens to an address", async () => {
     const ugtoken = await UGToken.deployed();
 

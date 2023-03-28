@@ -3,6 +3,14 @@
 const BreadToken = artifacts.require("BreadToken");
 
 contract("BreadToken", (accounts) => {
+  it("matches name successfully", async () => {
+    let breadToken = await BreadToken.new();
+
+    const name = await breadToken.name();
+    console.log(name);
+
+    assert.equal(name, "Bread Token");
+  });
   it("can mint tokens to an address", async () => {
     const breadToken = await BreadToken.deployed();
 
