@@ -16,8 +16,7 @@ It is built using the BNB Chain Truffle Box.
 There is an error running contracts in versions above 0.8.4, and thus,
 I built out this mini staking contract using 0.6.2
 
-It is still a WIP, as I'm yet to complete all the tests.
-At this moment, I have a test failing on calling the approve() method.
+It is still a WIP. All the Tests are passing!
 
 I'm also yet to build out the UI.
 
