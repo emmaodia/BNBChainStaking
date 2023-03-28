@@ -21,20 +21,14 @@ contract("Staking", (accounts) => {
       );
     });
 
-    it("can deposit token into the pool, and emit Approval and Deposit Events", async () => {
+    it("can deposit token into the pool", async () => {
       const res = await this.breadToken.balanceOf(accounts[0]);
       console.log("prev balance owner is ", await res.toNumber());
 
       await this.breadToken.mint(accounts[0], 1000);
-
-      const ownerPreviousBalance = await this.breadToken.balanceOf(accounts[0]); // //deposit
       await this.staking.createStakingPool(1, this.breadToken.address);
 
-      const amount = "1000";
-
-      console.log("amount ", amount);
-
-      let txn = await this.breadToken.approve(this.staking.address, amount, {
+      let txn = await this.breadToken.approve(this.staking.address, 1000, {
         from: accounts[0],
       });
       // console.log("txn: ", txn);
@@ -70,6 +64,20 @@ contract("Staking", (accounts) => {
       let approvalReceipt = await txn.logs[0].event;
 
       assert.equal(approvalReceipt, "Approval");
+    });
+
+    it("can withdraw tokens from the pool", async () => {
+      const res = await this.breadToken.balanceOf(accounts[0]);
+      console.log("prev balance owner is ", await res.toNumber());
+
+      const tx = await this.staking.withdrawStakedLPtokens(1, 10, {
+        from: accounts[0],
+      });
+      console.log(tx);
+      const newBalance = await this.breadToken.balanceOf(accounts[0]);
+      console.log("new balance owner is ", newBalance.toNumber());
+
+      expect(newBalance.toNumber()).to.equal(990);
     });
   });
 });
