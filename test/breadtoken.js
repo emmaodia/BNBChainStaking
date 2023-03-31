@@ -7,7 +7,6 @@ contract("BreadToken", (accounts) => {
     let breadToken = await BreadToken.new();
 
     const name = await breadToken.name();
-    console.log(name);
 
     assert.equal(name, "Bread Token");
   });

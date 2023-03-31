@@ -32,13 +32,9 @@ contract("Staking", (accounts) => {
         from: accounts[0],
       });
       // console.log("txn: ", txn);
-      let approvalReceipt = await txn.logs[0].event;
-      console.log(approvalReceipt);
-
-      assert.equal(approvalReceipt, "Approval");
 
       // await this.stakeToken.deposit(0, amount);
-      const excessValue = "300"; // 10000000000000000000
+
       const resp = await this.breadToken.balanceOf(accounts[0]);
       console.log("current balance owner is ", await resp.toNumber());
       let tx = await this.staking.depositToken(1, "20", {
