@@ -762,9 +762,9 @@ const Connect = async () => {
     const address = await signer.getAddress();
 
     console.log(address);
-    document.getElementById("addressInput").defaultValue = address;
+    // document.getElementById("addressInput").defaultValue = address;
 
-    return address;
+    // return address;
   }
 };
 // const check = await Connect();
@@ -782,6 +782,7 @@ function handleAmount(e) {
 }
 
 const amount = document.getElementById("amountInput");
+
 // const address = document.getElementById(`addressInput`);
 const log = document.getElementById(`address`);
 
@@ -790,12 +791,16 @@ amount.onchange = handleAmount;
 
 const ApproveStaking = async () => {
   console.log("Approve works");
-  const approve = await UGContract.approve(
-    "0xA5fE5E3B969DA111d54ECf41D2CB199b9506cBE8",
-    1000
-  );
-  const result = await approve;
-  console.log(result);
+  try {
+    const approve = await UGContract.approve(
+      "0xA5fE5E3B969DA111d54ECf41D2CB199b9506cBE8",
+      1000
+    );
+    const result = await approve;
+    console.log(result);
+  } catch (error) {
+    console.log("error");
+  }
 };
 
 document.getElementById("approveStaking").onclick = ApproveStaking;
