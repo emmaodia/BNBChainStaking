@@ -3,7 +3,3 @@
 .env.test
 build
 node_modules
-package-lock.json
-truffle-config.bsc.js
-box-img-lg.png
-box-img-sm.png

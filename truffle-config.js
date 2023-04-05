@@ -34,7 +34,7 @@ module.exports = {
   /**
    * contracts_directory tells Truffle where the contracts you want to compile are located
    */
-  contracts_directory: "./contracts/bsc",
+  contracts_directory: "./contracts/local-dev",
 
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -62,7 +62,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.6.2", // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.18", // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {

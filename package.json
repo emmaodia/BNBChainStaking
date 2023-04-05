@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.2",
-    "@pancakeswap/pancake-swap-lib": "^0.0.4"
+    "@pancakeswap/pancake-swap-lib": "^0.0.4",
+    "bn.js": "^5.2.1"
   }
 }
