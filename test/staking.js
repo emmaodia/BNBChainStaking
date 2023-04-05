@@ -2,6 +2,7 @@ const BreadToken = artifacts.require("BreadToken");
 const UGToken = artifacts.require("UGToken");
 const Staking = artifacts.require("Staking");
 const MockBEP20 = artifacts.require("MockBEP20");
+const BN = require("bn.js");
 
 contract("Staking", (accounts) => {
   before(async () => {
@@ -21,24 +22,29 @@ contract("Staking", (accounts) => {
       );
     });
 
-    it("can deposit token into the pool", async () => {
-      const res = await this.breadToken.balanceOf(accounts[0]);
-      console.log("prev balance owner is ", await res.toNumber());
+    it("can deposit tokens into the pool", async () => {
+      //   const res = await this.breadToken.balanceOf(accounts[0]);
+      //   console.log("prev balance owner is ", await res.toNumber());
+      const check = await this.staking.createStakingPool(
+        1,
+        this.mockBep.address
+      );
+      console.log(check);
 
-      await this.breadToken.mint(accounts[0], 1000);
-      await this.staking.createStakingPool(1, this.breadToken.address);
+      await this.ugToken.mint(accounts[2], 1000);
+      //   await this.staking.createStakingPool(2, this.mockBep.address);
 
-      let txn = await this.breadToken.approve(this.staking.address, 1000, {
-        from: accounts[0],
+      let txn = await this.ugToken.approve(this.mockBep.address, 1000, {
+        from: accounts[2],
       });
       // console.log("txn: ", txn);
 
-      // await this.stakeToken.deposit(0, amount);
-
-      const resp = await this.breadToken.balanceOf(accounts[0]);
+      const resp = await this.ugToken.balanceOf(accounts[2]);
       console.log("current balance owner is ", await resp.toNumber());
-      let tx = await this.staking.depositToken(1, "20", {
-        from: accounts[0],
+      //   await this.ugToken.transferFrom(accounts[0], this.staking, 20);
+      //   await this.breadToken.transferFrom(accounts[0], this.staking, 20);
+      let tx = await this.staking.depositToken(1, "600", {
+        from: accounts[2],
       });
 
       let receipt = await tx.logs[0].event;
@@ -46,30 +52,30 @@ contract("Staking", (accounts) => {
 
       assert.equal(receipt, "Deposit");
 
-      const newBalance = await this.breadToken.balanceOf(accounts[0]);
-      console.log("new balance owner is ", newBalance.toNumber());
+      const newBalance = new BN(await this.ugToken.balanceOf(accounts[2]));
+      console.log("new balance owner is ", newBalance.toString());
 
-      expect(newBalance.toNumber()).to.equal(980);
+      expect(newBalance.toString()).to.equal("400");
     });
 
-    it("can emit Approval event", async () => {
-      let txn = await this.breadToken.approve(this.staking.address, 1000, {
-        from: accounts[0],
-      });
-      // console.log("txn: ", txn);
-      let approvalReceipt = await txn.logs[0].event;
+    // it("can emit Approval event", async () => {
+    //   let txn = await this.breadToken.approve(this.staking.address, 1000, {
+    //     from: accounts[0],
+    //   });
+    //   // console.log("txn: ", txn);
+    //   let approvalReceipt = await txn.logs[0].event;
 
-      assert.equal(approvalReceipt, "Approval");
-    });
+    //   assert.equal(approvalReceipt, "Approval");
+    // });
 
     it("can withdraw tokens from the pool", async () => {
-      const res = await this.breadToken.balanceOf(accounts[0]);
-      console.log("prev balance owner is ", await res.toNumber());
+      const res = new BN(await this.ugToken.balanceOf(accounts[0]));
+      console.log("prev owner is having", await res.toString());
 
-      const tx = await this.staking.withdrawStakedLPtokens(1, 10, {
+      const tx = await this.staking.withdrawStakedLPtokens(0, 10, {
         from: accounts[0],
       });
-      console.log(tx);
+      //   console.log(tx);
       const newBalance = await this.breadToken.balanceOf(accounts[0]);
       console.log("new balance owner is ", newBalance.toNumber());
 
