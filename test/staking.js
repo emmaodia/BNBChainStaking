@@ -33,7 +33,7 @@ contract("Staking", (accounts) => {
       await this.ugToken.balanceOf(accounts[2]);
 
       await this.staking.createStakingPool(1, this.ugToken.address);
-      await this.staking.depositToken(1, "600", {
+      const tx = await this.staking.depositToken(1, "600", {
         from: accounts[2],
       });
 

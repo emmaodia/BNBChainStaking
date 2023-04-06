@@ -35,7 +35,6 @@ contract("BreadToken", (accounts) => {
     // console.log(breadToken);
     await this.breadToken.transfer(accounts[2], 3000);
     const A = await this.breadToken.balanceOf(accounts[2]);
-    console.log(A.toNumber());
     assert.equal(A.toNumber(), 3000, "The Transferred amount is not 30000");
   });
   it("can approve another address to spend its tokens", async () => {
@@ -43,13 +42,11 @@ contract("BreadToken", (accounts) => {
     await this.breadToken.transferFrom(accounts[2], accounts[1], 300);
 
     const newA = await this.breadToken.balanceOf(accounts[2]);
-    console.log(newA.toNumber());
     assert.equal(newA.toNumber(), 2700, "The Balance is not 2700");
   });
   it("can transfer from index2 account to any other account", async () => {
     await this.breadToken.transfer(accounts[1], 300, { from: accounts[2] });
     const B = await this.breadToken.balanceOf(accounts[1]);
-    console.log(B.toNumber());
 
     assert.equal(B.toNumber(), 600, "Balance is not equal to 600");
   });
