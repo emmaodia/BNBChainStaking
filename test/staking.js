@@ -26,26 +26,22 @@ contract("Staking", (accounts) => {
     it("can deposit tokens into a pool", async () => {
       await this.ugToken.mint(accounts[2], 1000);
 
-      let txn = await this.ugToken.approve(this.staking.address, 1000, {
+      await this.ugToken.approve(this.staking.address, 1000, {
         from: accounts[2],
       });
-      // console.log("txn: ", txn);
 
-      const resp = await this.ugToken.balanceOf(accounts[2]);
-      console.log("current balance owner is ", await resp.toNumber());
+      await this.ugToken.balanceOf(accounts[2]);
 
       await this.staking.createStakingPool(1, this.ugToken.address);
-      let tx = await this.staking.depositToken(1, "600", {
+      await this.staking.depositToken(1, "600", {
         from: accounts[2],
       });
 
       let receipt = await tx.logs[0].event;
-      console.log(receipt);
 
       assert.equal(receipt, "Deposit");
 
       const newBalance = new BN(await this.ugToken.balanceOf(accounts[2]));
-      console.log("new balance owner is ", newBalance.toString());
 
       expect(newBalance.toString()).to.equal("400");
     });
@@ -54,22 +50,18 @@ contract("Staking", (accounts) => {
       let txn = await this.breadToken.approve(this.staking.address, 1000, {
         from: accounts[0],
       });
-      // console.log("txn: ", txn);
+
       let approvalReceipt = await txn.logs[0].event;
 
       assert.equal(approvalReceipt, "Approval");
     });
 
     it("can withdraw tokens from the pool", async () => {
-      const res = new BN(await this.ugToken.balanceOf(accounts[2]));
-      console.log("prev owner is having", await res.toString());
-
       await this.staking.withdrawStakedLPtokens(1, "50", {
         from: accounts[2],
       });
-      //   console.log(tx);
+
       const newBalance = await this.ugToken.balanceOf(accounts[2]);
-      console.log("new balance owner is ", newBalance.toNumber());
 
       expect(newBalance.toNumber()).to.equal(450);
     });
